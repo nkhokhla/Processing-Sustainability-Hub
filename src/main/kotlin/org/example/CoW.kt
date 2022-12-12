@@ -14,9 +14,8 @@ import javax.swing.WindowConstants
 
 
 class CoW : PApplet() {
-
+    // variables
     var cp5: ControlP5? = null
-
     var url1: String? = null
     var url2: String? = null
     var url3: String? = null
@@ -29,6 +28,7 @@ class CoW : PApplet() {
     var font: ControlFont? =null
 
     init {
+        //made to close only current window
         runSketch(arrayOf(this.javaClass.simpleName), this)
     }
 
@@ -37,9 +37,11 @@ class CoW : PApplet() {
     }
 
     override fun setup() {
+        //creating font
         pfont = createFont("Arial", 20f, false) // use true/false for smooth/no-smooth
         font = ControlFont(pfont)
         surface.setTitle("CO2 Calculator")
+        //adding ui elements
         cp5 = ControlP5(this)
         cp5!!.addTextfield("0").setPosition(20f, 50f).setSize(200, 70).setAutoClear(false).getCaptionLabel().setFont(font).setText("Kilometers a month cycling").toUpperCase(false)
         cp5!!.addTextfield("1").setPosition(20f, 150f).setSize(200, 70).setAutoClear(false).getCaptionLabel().setFont(font).setText("Monthly electricity consumption").toUpperCase(false)
@@ -48,25 +50,30 @@ class CoW : PApplet() {
             ?.captionLabel
             ?.setFont(font)
             ?.alignX(CENTER)
-            ?.alignY(CENTER);
+            ?.alignY(CENTER)
+        //made to close only current window
         setDefaultClosePolicy(this, false)
     }
 
     override fun draw() {
+        //button action
         if (mousePressed&&mouseX>260f && mouseY>150f && mouseX<460f && mouseY<240f){
             clear()
             background(204f,204f,204f)
             textFont(pfont)
+            fill(0f,0f,0f)
             text("Calories burned a year:$cal\nCO2 from electricity:$el kg\nCO2 from driving:$co2 kg\n",480f,50f)
         }
 
     }
 
     override fun exit() {
+        //made to close only current window
         dispose()
         Processing.winCo = null
     }
     fun Submit() {
+        //calculations
         print("the following text was submitted :")
         url1 = cp5!!.get(Textfield::class.java, "0").text
         cal= parseInt(url1)*caloriesPerKm*12
@@ -81,6 +88,7 @@ class CoW : PApplet() {
     }
 
     fun setDefaultClosePolicy(pa: PApplet, keepOpen: Boolean) {
+        //made to close only current window(somewhere from internet)
         val surf = pa.surface.native
         val canvas = pa.graphics
         if (canvas.isGL) {
@@ -101,10 +109,12 @@ class CoW : PApplet() {
     }
 
     fun makeVisible() {
+        //made to close only current window
         surface.setVisible(true)
     }
 
     companion object {
+        //made to close only current window
         const val RENDERER = P3D
     }
 }

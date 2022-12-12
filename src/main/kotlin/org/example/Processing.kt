@@ -5,13 +5,14 @@ import controlP5.ControlP5
 import controlP5.Toggle
 import processing.core.PApplet
 import processing.core.PFont
+import processing.data.Table
 
 
 //changed code from https://codesloth.home.blog/2019/01/27/arduino-processing-gui-input/
 
 class Processing : PApplet() {
     var cp5: ControlP5? = null
-
+    var csvFile = "C:\\Users\\nazar\\IdeaProjects\\CS171Proj\\data\\questions.csv"
     // sets the time duration the button appears to be ON
     var buttonDuration = intArrayOf(2000, 2000, 2000) //ms
     var buttonStartTime = intArrayOf(0, 0, 0, 0) //ms
@@ -33,13 +34,12 @@ class Processing : PApplet() {
         val button_width = 200
         val button_height = 70
 
-
+ //creating Font
         val pfont: PFont = createFont("Arial", 20f, true) // use true/false for smooth/no-smooth
 
         val font = ControlFont(pfont)
 
         cp5 = ControlP5(this) // creates an object
-
 
         buttonRef = arrayOfNulls<Toggle>(5)
 
@@ -88,6 +88,7 @@ class Processing : PApplet() {
     }
 
     override fun draw() {
+        questions = loadTable(csvFile, "header")
         for (i in 0..2) {
             if (buttonRef[i]!!.state) {
                 if (millis() - buttonStartTime[i] > buttonDuration[i]) {
@@ -133,6 +134,7 @@ class Processing : PApplet() {
 
 
     companion object {
+        var questions: Table? =null
         var winI: InfoW? = null
         var winCo: CoW? = null
         var winQ: QuizW? = null

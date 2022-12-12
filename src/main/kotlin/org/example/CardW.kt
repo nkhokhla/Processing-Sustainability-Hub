@@ -15,6 +15,7 @@ import javax.swing.WindowConstants
 
 
 class CardW : PApplet() {
+    //variables
     var cp5: ControlP5? = null
     var pfont: PFont? = null
     var font: ControlFont? = null
@@ -22,6 +23,7 @@ class CardW : PApplet() {
     var selected1 = 0
 
     init {
+        //made to close only current window
         runSketch(arrayOf(this.javaClass.simpleName), this)
     }
 
@@ -31,7 +33,7 @@ class CardW : PApplet() {
 
     override fun setup() {
         surface.setTitle("Create Postcard")
-//        selectFolder("Select a folder to process:", "folderSelected");
+        //loading images
         imgs1[0] = loadImage(dataPath("test1.jpg"))
         imgs1[1] = loadImage(dataPath("test2.jpg"))
         imgs1[2] = loadImage(dataPath("test3.jpg"))
@@ -42,6 +44,7 @@ class CardW : PApplet() {
         imgs1[7] = loadImage(dataPath("test8.jpg"))
         imgs1[8] = loadImage(dataPath("test9.jpg"))
         setDefaultClosePolicy(this, false)
+        //adding ui elements
         pfont = createFont("Arial", 20f, false) // use true/false for smooth/no-smooth
         font = ControlFont(pfont)
         cp5 = ControlP5(this)
@@ -57,29 +60,26 @@ class CardW : PApplet() {
 
     override fun draw() {
         if (mousePressed&&mouseX>350f && mouseY>20f && mouseX<550f && mouseY<90f) {
+            //selecting image
             clear()
             background(204f, 204f, 204f)
             selected1 = random(imgs1.size.toFloat()).toInt()
             image(imgs1[selected1], 220f, 100f)
         }
         if (mousePressed&&mouseX>350f && mouseY>20f && mouseX<550f && mouseY<90f){
+            //saving image
             imgs1[selected1]?.save("C:\\Users\\nazar\\OneDrive\\Desktop\\img.jpg")
         }
 
     }
-    fun folderSelected(selection: File?) {
-        if (selection == null) {
-            println("Window was closed or the user hit cancel.")
-        } else {
-            println("User selected " + selection.getAbsolutePath())
-        }
-    }
     override fun exit() {
+        //made to close only current window
         dispose()
         Processing.winCa = null
     }
 
     fun setDefaultClosePolicy(pa: PApplet, keepOpen: Boolean) {
+        //made to close only current window
         val surf = pa.surface.native
         val canvas = pa.graphics
         if (canvas.isGL) {
@@ -100,10 +100,12 @@ class CardW : PApplet() {
     }
 
     fun makeVisible() {
+        //made to close only current window
         surface.setVisible(true)
     }
 
     companion object {
+        //made to close only current window
         const val RENDERER = P3D
     }
 }
