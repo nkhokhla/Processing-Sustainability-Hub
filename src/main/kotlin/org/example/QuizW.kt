@@ -13,68 +13,41 @@ import javax.swing.WindowConstants
 
 
 class QuizW : PApplet() {
+    //changed code from https://www.chegg.com/homework-help/questions-and-answers/hi-create-trivia-game-processing-https-processingorg-java-reads-questions-csv-accepts-answ-q32577212
+    //questions from https://cbseacademic.nic.in/web_material/Manuals/Ecoclub.pdf
     //variables
-    var app: PApplet? = null
-
-    //This table is the initial imported CSV
-    var f: PFont? = null
-    var csvFile = dataPath("questions.csv")
+    var f: PFont? = null//font
     var rowCount = questions!!.rowCount ///How many questions there are in the import
-    var pressTime =0
     var id = 0 //Individual question IDs
-    var t = ""
-    var q=1
-    var questionCount = 2 //Maximum size I expect the array of questions could be.
+    var q = 1//other id
 
-    var question = Array(3) {
+    var question = Array(rowCount + 1) {
         arrayOfNulls<String>(
             9
         )
     } //two dimensional array of questions, their answers, and correct/wrong responses.
-
-
+    var times = Array(rowCount+1) { 0 }//array for storing time to display 3 secs after press
+    var prId = 0//previous id for looping
     init {
         runSketch(arrayOf(this.javaClass.simpleName), this)
-    }
+    }//opens this window
 
     override fun settings() {
-        size(900, 600, RENDERER)
+        size(900, 600, RENDERER)//window size
     }
 
     override fun setup() {
-        surface.setTitle("Quiz")
-//        try {
-//            questionCount = (PApplet().loadTable(csvFile, "header")).getRowCount() //Load up the questions sheet
-//        } catch (e: RuntimeException) {
-//
-//        }
-//        try {
-//        convertTable() // Convert the questions sheet to a two dimensional array
-//        } catch (e: RuntimeException) {
-//
-//        }
-        f = createFont("Arial", 20f, false) // use true/false for smooth/no-smooth
-
-        setDefaultClosePolicy(this, false)
+        surface.setTitle("Quiz")//title
+        f = createFont("Arial", 20f, false) // font details
+        setDefaultClosePolicy(this, false)//made to close only current window
     }
 
-    fun convertTable(n: Int) {
-//        app = papp
-//        try{
-//        val questions = app!!.loadTable(csvFile, "header")
-//            println("BRUUUH")
-//         } catch (e: RuntimeException) {
-//             sketchPath()
-//
-//    }
-//        println("\n" +row.getString("id"))
+    fun convertTable(n: Int) {//gets data to question array
         if (questions != null) {
             var row = questions!!.getRow(n)
             id = row.getInt("id")
-//            println(id)
             question[id][0] = row.getString("id")
             question[id][1] = row.getString("Question")
-            t = question[1][1].toString()
             question[id][2] = row.getString("A")
             question[id][3] = row.getString("B")
             question[id][4] = row.getString("C")
@@ -82,18 +55,15 @@ class QuizW : PApplet() {
             question[id][6] = row.getString("Correct").toLowerCase()
             question[id][7] = row.getString("Correct Response")
             question[id][8] = row.getString("Wrong Response")
-        } else{
-            println("AAAHAH")
         }
-//        app!!.registerMethod("draw", this);
-//        println(question[1][1])
-//        return question
     }
 
     fun displayNewQuestion(que: Array<Array<String?>>, questionID: Int) {
-        textFont(f)
-        fill(255)
-//        println(que[1][1])
+        textFont(f)// sets font
+        fill(255)// colour
+        clear()
+        background(204f, 204f, 204f)
+        //displaying texts and ellipses
         text(que[questionID][1], 20f, 50f)
         fill(220f, 20f, 60f)
         ellipse((width / 16 + 65).toFloat(), (height / 3).toFloat(), 95f, 95f)
@@ -113,66 +83,56 @@ class QuizW : PApplet() {
         text(que[questionID][3], width / 16 + 150f, height / 3 + 110f)
         text(que[questionID][4], width / 16f + 150, height / 3 + 210f)
         text(que[questionID][5], width / 16 + 150f, height / 3 + 310f)
+        //getting correctAnswer
         val correctAnswer = question[questionID][6]?.lowercase(Locale.getDefault())?.get(0)
-        if (key == correctAnswer) {
-            correctAnswerSubmitted(question[questionID][7]);
-        } else if (keyPressed == true) {
-            wrongAnswerSubmitted(question[questionID][8]);
+        if (key == correctAnswer) {//checking for correctAnswer
+            if (prId!=questionID) {//getting time
+                noLoop()
+                times[questionID] = millis()
+                prId =questionID
+                loop()
+            }
+            answerSubmitted(question[questionID][7],times[questionID])//displaying respone
+        } else if (key == 'a' || key == 'b' || key == 'c' || key == 'd') {//same with wrong answer
+            if (prId!=questionID) {
+                noLoop()
+                times[questionID] = millis()
+                prId =questionID
+                loop()
+            }
+            answerSubmitted(question[questionID][8],times[questionID])
+            if (questionID == 2) {
+                println(questionID)
+            }
         }
     }
 
-    //    fun looper(question: Array<Array<String>>) {
-//        val questionSelected = random(1f, questionCount.toFloat()).toInt()
-////
-////        print(questionSelected);
-////        print(question[questionSelected][1]);
-////        displayNewQuestion(question, questionSelected)
-//    }
     override fun draw() {
-//        print(rowCount)
-        if(q<=rowCount){
-            convertTable(q - 1)
-            displayNewQuestion(question, q)
-        } else{
-            text("Quiz finished",50f,20f)
+        if (q <= rowCount) {//while there are more questions
+            convertTable(q - 1)//get data
+            displayNewQuestion(question, q)//display
+
+        } else {
+            clear()
+            background(204f, 204f, 204f)
+            text("Quiz finished", 20f, 50f)
         }
 
     }
-    override fun keyReleased() {
-        pressTime = millis()
-        println("CKE")
-    }
-    fun correctAnswerSubmitted(correctResponse: String?) {
-//        pressTime=0
-        if (millis() < pressTime + 5000) {
+
+    fun answerSubmitted(response: String?, pressTime:Int) {
+        if (millis()< pressTime+3000) {//displays response for 3 secs
             clear()
-            background(204f,204f,204f)
-            text(correctResponse, 20f, 50f)
-//            println(time)
-            println("CASE1")
-        } else{
-//            println("CASE2")
+            background(204f, 204f, 204f)
+            text(response, 20f, 50f)
+        } else {//then activates next question
             clear()
-            background(204f,204f,204f)
+            background(204f, 204f, 204f)
             q++
-            println(pressTime)
+            key = ' '//empties key variable
         }
     }
 
-    fun wrongAnswerSubmitted(wrongResponse: String?) {
-        println(pressTime)
-        if (millis() < pressTime + 5000) {
-            clear()
-            background(204f,204f,204f)
-            println("CASE3")
-            text(wrongResponse, 20f, 50f)
-        } else{
-            clear()
-            background(204f,204f,204f)
-            println("CASE4")
-            q++
-        }
-    }
 
     override fun exit() {
         //made to close only current window

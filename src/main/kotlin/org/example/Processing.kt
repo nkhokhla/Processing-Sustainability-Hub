@@ -11,17 +11,16 @@ import processing.data.Table
 //changed code from https://codesloth.home.blog/2019/01/27/arduino-processing-gui-input/
 
 class Processing : PApplet() {
+    //variables
     var cp5: ControlP5? = null
-    var csvFile = "C:\\Users\\nazar\\IdeaProjects\\CS171Proj\\data\\questions.csv"
-    // sets the time duration the button appears to be ON
-    var buttonDuration = intArrayOf(2000, 2000, 2000) //ms
-    var buttonStartTime = intArrayOf(0, 0, 0, 0) //ms
+    var csvFile = dataPath("questions.csv")//questions for quiz
+    //made to show hoover effect
     var b1c = 0
     var b2c = 0
     var b3c = 0
     var b4c = 0
-    // stores all the button handles in an array to iterate
 
+    // stores all the button handles in an array to iterate
     var buttonRef = arrayOfNulls<Toggle>(5)
 
 
@@ -30,7 +29,8 @@ class Processing : PApplet() {
     }
 
     override fun setup() {
-        surface.setTitle("Sustainable Environment Hub");
+        surface.setTitle("Sustainable Environment Hub")
+        //button size
         val button_width = 200
         val button_height = 70
 
@@ -59,7 +59,7 @@ class Processing : PApplet() {
             ?.setSize(button_width, button_height) //(width, height)
             ?.setValue(false)
             ?.setCaptionLabel("CO2 Calculator")
-            ?.captionLabel
+            ?.captionLabel//gets label of the button to change font and position of text
             ?.setFont(font)
             ?.alignX(CENTER)
             ?.alignY(CENTER)
@@ -88,53 +88,41 @@ class Processing : PApplet() {
     }
 
     override fun draw() {
-        questions = loadTable(csvFile, "header")
-        for (i in 0..2) {
-            if (buttonRef[i]!!.state) {
-                if (millis() - buttonStartTime[i] > buttonDuration[i]) {
-                    buttonRef[i]!!.setValue(false)
-                }
-            }
-        }
+        questions = loadTable(csvFile, "header")//loading data from csv file
     }
-
-    // the functions that follow must follow button names!
     fun button_1() {
         print(1)
         b1c++
-          if (b1c >1 && b1c % 2 == 0){
+          if (b1c >1 && b1c % 2 == 0){//made to get hoover effect
             winI = InfoW()
         }
-        buttonStartTime[0] = millis()
     }
 
     fun button_2() {
         b2c++
-        if (b2c >1 && b2c % 2 == 0){
+        if (b2c >1 && b2c % 2 == 0){//made to get hoover effect
             winCo = CoW()
         }
-        buttonStartTime[1] = millis()
     }
 
     fun button_3() {
         b3c++
-        if (b3c >1 && b3c % 2 == 0){
+        if (b3c >1 && b3c % 2 == 0){//made to get hoover effect
             winQ = QuizW()
         }
-        buttonStartTime[2] = millis()
     }
 
     fun button_4() {
         b4c++
-        if (b4c >1 && b4c % 2 == 0){
+        if (b4c >1 && b4c % 2 == 0){//made to get hoover effect
             winCa = CardW()
         }
-        buttonStartTime[2] = millis()
     }
 
 
     companion object {
-        var questions: Table? =null
+        var questions: Table? =null//made to transfer questions to next window
+        //other windows
         var winI: InfoW? = null
         var winCo: CoW? = null
         var winQ: QuizW? = null
