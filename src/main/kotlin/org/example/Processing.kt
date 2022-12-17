@@ -1,8 +1,8 @@
 package org.example
 
+import controlP5.Bang
 import controlP5.ControlFont
 import controlP5.ControlP5
-import controlP5.Toggle
 import processing.core.PApplet
 import processing.core.PFont
 import processing.data.Table
@@ -11,17 +11,15 @@ import processing.data.Table
 //changed code from https://codesloth.home.blog/2019/01/27/arduino-processing-gui-input/
 
 class Processing : PApplet() {
-    //variables
     var cp5: ControlP5? = null
-    var csvFile = dataPath("questions.csv")//questions for quiz
-    //made to show hoover effect
+    var csvFile = dataPath("questions.csv")
     var b1c = 0
     var b2c = 0
     var b3c = 0
     var b4c = 0
-
     // stores all the button handles in an array to iterate
-    var buttonRef = arrayOfNulls<Toggle>(5)
+
+    var buttonRef = arrayOfNulls<Bang>(5)
 
 
     override fun settings() {
@@ -29,8 +27,7 @@ class Processing : PApplet() {
     }
 
     override fun setup() {
-        surface.setTitle("Sustainable Environment Hub")
-        //button size
+        surface.setTitle("Sustainable Environment Hub");
         val button_width = 200
         val button_height = 70
 
@@ -41,43 +38,38 @@ class Processing : PApplet() {
 
         cp5 = ControlP5(this) // creates an object
 
-        buttonRef = arrayOfNulls<Toggle>(5)
-
-        buttonRef[0] = cp5!!.addToggle("button_1")
-        buttonRef[0]?.setPosition(100f, 50f) //x and y coordinates of upper left corner of button
-            ?.setSize(button_width, button_height) //(width, height)
-            ?.setValue(false)
+        buttonRef = arrayOfNulls<Bang>(5)
+//buttons
+        cp5!!.addBang("button_1").setPosition(100f, 50f)
+            .setSize(button_width, button_height)
             ?.setCaptionLabel("Information")
+            ?.captionLabel//gets text to change its position and font
+            ?.setFont(font)
+            ?.alignX(CENTER)
+            ?.alignY(CENTER)
+
+
+        var b2= cp5!!.addBang("button_2")
+        b2?.setPosition(100f, 150f) //x and y coordinates of upper left corner of button
+            ?.setSize(button_width, button_height) //(width, height)
+            ?.setCaptionLabel("CO2 Calculator")
             ?.captionLabel
             ?.setFont(font)
             ?.alignX(CENTER)
             ?.alignY(CENTER)
 
-
-        buttonRef[1] = cp5!!.addToggle("button_2")
-        buttonRef[1]?.setPosition(100f, 150f) //x and y coordinates of upper left corner of button
-            ?.setSize(button_width, button_height) //(width, height)
-            ?.setValue(false)
-            ?.setCaptionLabel("CO2 Calculator")
-            ?.captionLabel//gets label of the button to change font and position of text
-            ?.setFont(font)
-            ?.alignX(CENTER)
-            ?.alignY(CENTER)
-
-        buttonRef[2] = cp5!!.addToggle("button_3")
+        buttonRef[2] = cp5!!.addBang("button_3")
         buttonRef[2]?.setPosition(100f, 250f) //x and y coordinates of upper left corner of button
             ?.setSize(button_width, button_height) //(width, height)
-            ?.setValue(false)
             ?.setCaptionLabel("Quiz")
             ?.captionLabel
             ?.setFont(font)
             ?.alignX(CENTER)
             ?.alignY(CENTER)
 
-        buttonRef[3] = cp5!!.addToggle("button_4")
+        buttonRef[3] = cp5!!.addBang("button_4")
         buttonRef[3]?.setPosition(100f, 350f) //x and y coordinates of upper left corner of button
             ?.setSize(button_width, button_height) //(width, height)
-            ?.setValue(false)
             ?.setCaptionLabel("E-postcard")
             ?.captionLabel
             ?.setFont(font)
@@ -88,41 +80,43 @@ class Processing : PApplet() {
     }
 
     override fun draw() {
-        questions = loadTable(csvFile, "header")//loading data from csv file
-    }
-    fun button_1() {
-        print(1)
-        b1c++
-          if (b1c >1 && b1c % 2 == 0){//made to get hoover effect
+        //getting data for quiz
+        questions = loadTable(csvFile, "header")
+        //made for hoover effect
+        //checking if clicked on buttons
+        if (mousePressed&&mouseX>100f && mouseY>50f && mouseX<300f && mouseY<120f&&b1c==0) {
+            noLoop()//used to open only one window
             winI = InfoW()
+            b1c=1//used to open only one window
+            mousePressed=false//used to wait for next click
+            loop()//used to open only one window
         }
-    }
-
-    fun button_2() {
-        b2c++
-        if (b2c >1 && b2c % 2 == 0){//made to get hoover effect
+        if (mousePressed&&mouseX>100f && mouseY>150f && mouseX<300f && mouseY<220f&&b2c==0) {
+            noLoop()
             winCo = CoW()
+            b2c=1
+            mousePressed=false
+            loop()
         }
-    }
-
-    fun button_3() {
-        b3c++
-        if (b3c >1 && b3c % 2 == 0){//made to get hoover effect
+        if (mousePressed&&mouseX>100f && mouseY>250f && mouseX<300f && mouseY<320f&&b3c==0) {
+            noLoop()
             winQ = QuizW()
+            b3c=1
+            mousePressed=false
+            loop()
         }
-    }
-
-    fun button_4() {
-        b4c++
-        if (b4c >1 && b4c % 2 == 0){//made to get hoover effect
+        if (mousePressed&&mouseX>100f && mouseY>350f && mouseX<300f && mouseY<420f&&b4c==0) {
+            noLoop()
             winCa = CardW()
+            b4c=1
+            mousePressed=false
+            loop()
         }
-    }
 
+    }
 
     companion object {
-        var questions: Table? =null//made to transfer questions to next window
-        //other windows
+        var questions: Table? =null
         var winI: InfoW? = null
         var winCo: CoW? = null
         var winQ: QuizW? = null
